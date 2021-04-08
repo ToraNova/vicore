@@ -1,0 +1,22 @@
+Metadata-Version: 1.1
+Name: vibase
+Version: 0.1.0
+Summary: vial-base (vibase), a reusable vial architecture module
+Home-page: https://github.com/toranova/vibase/
+Author: Chia Jason
+Author-email: chia_jason96@live.com
+License: MIT
+Download-URL: https://github.com/ToraNova/vibase/archive/refs/tags/v0.1.0.tar.gz
+Description: UNKNOWN
+Keywords: Flask
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8

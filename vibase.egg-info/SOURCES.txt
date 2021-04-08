@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+vibase/__init__.py
+vibase/formutil.py
+vibase.egg-info/PKG-INFO
+vibase.egg-info/SOURCES.txt
+vibase.egg-info/dependency_links.txt
+vibase.egg-info/not-zip-safe
+vibase.egg-info/top_level.txt
