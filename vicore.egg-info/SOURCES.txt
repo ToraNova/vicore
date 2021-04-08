@@ -1,0 +1,10 @@
+README.md
+setup.cfg
+setup.py
+vicore/__init__.py
+vicore/formutil.py
+vicore.egg-info/PKG-INFO
+vicore.egg-info/SOURCES.txt
+vicore.egg-info/dependency_links.txt
+vicore.egg-info/not-zip-safe
+vicore.egg-info/top_level.txt

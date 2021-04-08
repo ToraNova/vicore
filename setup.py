@@ -3,14 +3,14 @@ from setuptools import find_packages, setup
 _version = '0.1.0'
 
 setup(
-    name='vibase',
+    name='vicore',
     version=_version,
-    description='vial-base (vibase), a reusable vial architecture module',
+    description='vial-core (vicore), a reusable vial architecture core module',
     packages=find_packages(),
     author='Chia Jason',
     author_email='chia_jason96@live.com',
-    url='https://github.com/toranova/vibase/',
-    download_url='https://github.com/ToraNova/vibase/archive/refs/tags/v%s.tar.gz' % _version,
+    url='https://github.com/toranova/vicoreibase/',
+    download_url='https://github.com/ToraNova/vicoreibase/archive/refs/tags/v%s.tar.gz' % _version,
     license='MIT',
     include_package_data=True,
     zip_safe=False,
