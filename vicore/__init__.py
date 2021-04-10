@@ -8,7 +8,7 @@ from collections import namedtuple
 AppArch = namedtuple('AppArch', ['bp'])
 AppArchExt = namedtuple('AppArchExt', ['bp','ext'])
 
-class ViArchBase:
+class BaseArch:
     # for vicms, where reference 'content' is always needed
     def _cms_reroute(self, fromkey):
         if self._rkarg.get(fromkey):
@@ -31,7 +31,7 @@ class ViArchBase:
         if not self._route.get(key):
             self._route[key] = value
 
-    # generates a blueprint with url prefixing
+    # initializes a blueprint with url prefixing
     def _init_bp(self):
         return Blueprint(self._viname, __name__, url_prefix = self._urlprefix)
 

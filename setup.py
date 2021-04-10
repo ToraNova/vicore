@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-_version = '0.1.0'
+_version = '0.1.1'
 
 setup(
     name='vicore',
@@ -16,6 +16,8 @@ setup(
     zip_safe=False,
     keywords = ['Flask'],
     install_requires=[
+        'flask',
+        'sqlalchemy',
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
