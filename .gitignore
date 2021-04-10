@@ -1,6 +1,6 @@
 # ignore compiled bytecode
 *.pyc
-__pycache__/
+__pycache__/**
 
 # virtualenv
 lib64
