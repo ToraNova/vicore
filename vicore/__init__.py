@@ -10,11 +10,16 @@ AppArchExt = namedtuple('AppArchExt', ['bp','ext'])
 
 class BaseArch:
     # for vicms, where reference 'content' is always needed
-    def _cms_reroute(self, fromkey):
-        if self._rkarg.get(fromkey):
-            return redirect(url_for(self._route[fromkey], content=self._viname, **self._rkarg.get(fromkey)))
-        else:
-            return redirect(url_for(self._route[fromkey], content=self._viname))
+    # deprecated, kept for backward compatibility,
+    # use _reroute_mod instead
+    # use: call _reroute_mod('name', 'value') after reroute settings
+    # to always insert url_for(... , name = value , ...) in reroute calls
+    def _reroute_mod(self, farg_name, farg_value):
+        for k in self._route.keys():
+            if self._rkarg.get(k) is None:
+                self._rkarg[k] = {farg_name: farg_value}
+            else:
+                self._rkarg[k][farg_name] = farg_value
 
     # the basic reroute function
     def _reroute(self, fromkey):
@@ -37,7 +42,7 @@ class BaseArch:
 
     def set_callback(self, event, cbfunc):
         if not callable(cbfunc):
-            raise TypeError("callback function should be callable")
+            raise TypeError("callback function needs to be callable")
         self._callbacks[event] = cbfunc
 
     def callback(self, event, *args):
@@ -57,9 +62,20 @@ class BaseArch:
         self.callback('ex', e)
 
     def __init__(self, viname, templates = {}, reroutes = {}, reroutes_kwarg = {}, url_prefix = None):
-        self._templ = templates
-        self._route = reroutes
-        self._rkarg = reroutes_kwarg
+        self._templ = templates.copy()
+        self._route = reroutes.copy()
+        self._rkarg = reroutes_kwarg.copy()
+        if type(self._templ) is not dict:
+            raise TypeError("templates needs to of type 'dictionary'")
+        if type(self._route) is not dict:
+            raise TypeError("reroutes needs to of type 'dictionary'")
+        if type(self._rkarg) is not dict:
+            raise TypeError("reroutes_kwarg needs to of type 'dictionary'")
+        if type(viname) is not str:
+            raise TypeError("viname needs to of type 'string'")
+        if url_prefix is not None and type(url_prefix) is not str:
+            raise TypeError("url_prefix needs to of type 'string'")
+
         if url_prefix is None:
             self._urlprefix = '/%s' % viname
         elif url_prefix == '/':
