@@ -9,6 +9,19 @@ AppArch = namedtuple('AppArch', ['bp'])
 AppArchExt = namedtuple('AppArchExt', ['bp','ext'])
 
 class BaseArch:
+    # default functions for vial project dev
+    def _default_tp(self, route_name, default):
+        if not self._templ.get(route_name):
+            self._templ[route_name] = default
+
+    def _default_rt(self, route_name, default):
+        if not self._route.get(route_name):
+            self._route[route_name] = default
+
+    def _default_fm(self, route_name, default):
+        if not self._flash.get(route_name):
+            self._route[route_name] = default
+
     # for vicms, where reference 'content' is always needed
     # deprecated, kept for backward compatibility,
     # use _reroute_mod instead
@@ -28,53 +41,59 @@ class BaseArch:
         else:
             return redirect(url_for(self._route[fromkey]))
 
-    def _default_tp(self, key, value):
-        if not self._templ.get(key):
-            self._templ[key] = value
-
-    def _default_rt(self, key, value):
-        if not self._route.get(key):
-            self._route[key] = value
-
     # initializes a blueprint with url prefixing
     def _init_bp(self):
         return Blueprint(self._viname, __name__, url_prefix = self._urlprefix)
 
-    def set_callback(self, event, cbfunc):
-        if not callable(cbfunc):
-            raise TypeError("callback function needs to be callable")
-        self._callbacks[event] = cbfunc
-
-    def callback(self, event, *args):
-        return self._callbacks[event](*args)
+    def rxcall(self, route, result, *args, **kwargs):
+        if self._rxcall.get(route) is None or self._rxcall[route].get(result) is None:
+            # unset, flash the first arg as msg
+            if len(args) > 0:
+                if type(args[0]) is str:
+                    flash(args[0], result)
+                elif isinstance(args[0], Exception):
+                    flash('an exception (%s) has occurred: %s' % (type(args[0]).__name__, str(args[0])), result)
+                else:
+                    flash(str(args[0]), result)
+            else:
+                flash(route, result)
+        else:
+            # execute the callback
+            self._rxcall[route][result](*args, **kwargs)
 
     # convenience functions
-    def error(self, msg):
-        self.callback('err', msg)
+    def ok(self, route, *args, **kwargs):
+        # all good
+        self.rxcall(route,'ok',*args, **kwargs)
 
-    def ok(self, msg):
-        self.callback('ok', msg)
+    def err(self, route, *args, **kwargs):
+        # error caused by user
+        self.rxcall(route,'err',*args, **kwargs)
 
-    def warn(self, msg):
-        self.callback('warn', msg)
+    def ex(self, route, *args, **kwargs):
+        # error caused by devs
+        self.rxcall(route,'ex',*args, **kwargs)
 
-    def ex(self, e):
-        self.callback('ex', e)
+    def warn(self,route, *args, **kwargs):
+        # a warning
+        self.rxcall(route, 'warn', *args, **kwargs)
 
-    def __init__(self, viname, templates = {}, reroutes = {}, reroutes_kwarg = {}, url_prefix = None):
+    # viname - name of the vial
+    # templates - the template dictionary, same for reroutes
+    # reroutes_kwarg - additional kwarg to pass in during a reroute fcall
+    # rex_callback - route execution callback, a function table at the end of a route execution
+    # url_prefix - url prefix of a blueprint generated. use / to have NO prefix, leave it at None to default to /viname
+    def __init__(self, viname, templates = {}, reroutes = {}, reroutes_kwarg = {}, rex_callback = {}, url_prefix = None):
+        assert type(viname) is str
+        assert type(templates) is dict
+        assert type(reroutes) is dict
+        assert type(reroutes_kwarg) is dict
+        assert type(rex_callback) is dict
+        assert type(url_prefix) is str or url_prefix is None
         self._templ = templates.copy()
         self._route = reroutes.copy()
         self._rkarg = reroutes_kwarg.copy()
-        if type(self._templ) is not dict:
-            raise TypeError("templates needs to of type 'dictionary'")
-        if type(self._route) is not dict:
-            raise TypeError("reroutes needs to of type 'dictionary'")
-        if type(self._rkarg) is not dict:
-            raise TypeError("reroutes_kwarg needs to of type 'dictionary'")
-        if type(viname) is not str:
-            raise TypeError("viname needs to of type 'string'")
-        if url_prefix is not None and type(url_prefix) is not str:
-            raise TypeError("url_prefix needs to of type 'string'")
+        self._rxcall = rex_callback.copy()
 
         if url_prefix is None:
             self._urlprefix = '/%s' % viname
@@ -83,10 +102,3 @@ class BaseArch:
         else:
             self._urlprefix = url_prefix
         self._viname = viname
-
-        self._callbacks = {
-                'err': lambda msg : flash(msg, 'err'),
-                'ok': lambda msg : flash(msg, 'ok'),
-                'warn': lambda msg : flash(msg, 'warn'),
-                'ex': lambda ex : flash("an exception (%s) has occurred: %s" % (type(ex).__name__, str(ex)), 'err'),
-        }
