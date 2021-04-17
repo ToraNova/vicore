@@ -35,11 +35,16 @@ class BaseArch:
                 self._rkarg[k][farg_name] = farg_value
 
     # the basic reroute function
-    def _reroute(self, fromkey):
-        if self._rkarg.get(fromkey):
-            return redirect(url_for(self._route[fromkey], **self._rkarg.get(fromkey)))
-        else:
-            return redirect(url_for(self._route[fromkey]))
+    def _reroute(self, fromkey, **kwargs):
+        if type(self._rkarg.get(fromkey)) is dict:
+            passd = {}
+            for k, v in self._rkarg.get(fromkey).items():
+                if v is None and k in kwargs:
+                    passd[k] = kwargs[k]
+                else:
+                    passd[k] = v
+            return redirect(url_for(self._route[fromkey], **passd))
+        return redirect(url_for(self._route[fromkey]))
 
     # initializes a blueprint with url prefixing
     def _init_bp(self):

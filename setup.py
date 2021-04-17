@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-_version = '0.1.3'
+_version = '0.1.4'
 
 setup(
     name='vicore',
