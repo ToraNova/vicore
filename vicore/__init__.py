@@ -57,7 +57,7 @@ class BaseArch:
                 if type(args[0]) is str:
                     flash(args[0], result)
                 elif isinstance(args[0], Exception):
-                    flash('an exception (%s) has occurred: %s' % (type(args[0]).__name__, str(args[0])), result)
+                    flash('an exception (%s) has occurred: %s' % (type(args[0]).__name__, str(args[0])), 'err')
                 else:
                     flash(str(args[0]), result)
             else:
